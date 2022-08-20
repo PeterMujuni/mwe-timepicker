@@ -5,20 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mwebesa Timepicker</title>
+    <!-- <style>
+         .time-picker {
+            position: absolute;
+            display: inline-block;
+            padding: 0.625rem;
+            border-radius:  0;
+            background-color: #eee;
+        }
+        .time-picker__select {
+            appearance: none;
+            outline: none;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 10px;
+            background-color: white;
+            cursor: pointer;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+    </style> -->
 </head>
 <body>
     <aside class="time-zones">
         <p>Please select time format:</p>
         <input type="radio" id="format12" name="time_format" value="12" class="mwe-timezone" >
         <label for="format12">12</label><br>
+        <input type="radio" id="format24" name="time_format" value="24" class="mwe-timezone" checked>
+        <label for="format24">24</label><br>
     </aside>
-    
 
-    <input type="radio" id="format24" name="time_format" value="24" class="mwe-timezone" checked>
-    <label for="format24">24</label><br>
-
-    <input type="text" class="mwe-timepickable" value="12:45" readonly>
-    <input type="text" class="mwe-timepickable" value="12:45" readonly>
+    <input type="text" class="mwe-timepickable" value="" readonly>
+    <input type="text" class="mwe-timepickable" value="" readonly>
     <script src="/main.js" type="module"></script>
 </body>
 </html>

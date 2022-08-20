@@ -1,62 +1,56 @@
 export const activate = () => {
     document.head.insertAdjacentHTML("beforeend",`
-    <style>
-    .time-picker {
-        position: absolute;
-        display: inline-block;
-        padding: 0.625rem;
-        border-radius:  0;
-        background-color: #eee;
-    }
-    .time-picker__select {
-        /* -webkit-appearance: none;
-        -moz-appearance: none; */
-        appearance: none;
-        outline: none;
-        text-align: center;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 6px 10px;
-        background-color: white;
-        cursor: pointer;
-        font-family: "Source Sans Pro", sans-serif;
-    }
-    </style>
+        <style>
+        .time-picker {
+            position: absolute;
+            display: inline-block;
+            padding: 0.625rem;
+            border-radius:  0;
+            background-color: #eee;
+        }
+        .time-picker__select {
+            /* -webkit-appearance: none;
+            -moz-appearance: none; */
+            appearance: none;
+            outline: none;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 10px;
+            background-color: white;
+            cursor: pointer;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+        </style>
     `);
 
     document.querySelectorAll(".mwe-timepickable").forEach(mweTimePickable => {
+        console.log(mweTimePickable)
      let activePicker = null;
 
-     mweTimePickable.addEventListener("focus", () => {
-        if(activePicker) return;
+        mweTimePickable.addEventListener("focus", () => {
+            if(activePicker) return;
 
-        activePicker = show(mweTimePickable);
+            activePicker = show(mweTimePickable, "24");
+            
+            const onClickAway = ({ target }) => {
+                if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
+                    return;
+                }
+                document.removeEventListener("mousedown", onClickAway);
+                document.body.removeChild(activePicker);
+                activePicker = null
+            };
 
-        const onClickAway = ({ target }) => {
-            if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
-                return;
-            }
-            document.removeEventListener("mousedown", onClickAway);
-            document.body.removeChild(activePicker);
-            activePicker = null
-        };
-
-        document.addEventListener("mousedown", onClickAway)
-     });
-    });
-
-    document.querySelectorAll(".mwe-timezone").forEach(zone => {
-        let activeZone = null;
-        
-        zone.addEventListener("change", ({target}) => {
-            console.log("toggle was made", target)
+            document.addEventListener("mousedown", onClickAway)
         });
-    });
-    
+    }); 
 }
 
-const show = (mweTimePickable) => {
-    const picker = buildPicker(mweTimePickable);
+const show = (mweTimePickable, zone) => {
+    // const zone = "12";
+    
+    const picker = buildPicker(mweTimePickable, zone);
 
     const { bottom: top, left } = mweTimePickable.getBoundingClientRect();
     picker.style.top = `${top}px`
@@ -67,90 +61,107 @@ const show = (mweTimePickable) => {
     return picker;
 }
 
-const buildPicker = (mweTimePickable) => {
-
+const buildPicker = (mweTimePickable, zone) => {
+    // const zone = "24"
     const picker = document.createElement("div");
-    const timeZones = getCheckedZone();
-    
-    
-    let hours;
-    if(timeZones.value === 12){
-        hours = [1,2,3,4,5,6,7,8,9,10,11,12].map(numberToOption);
-    } else {
-        hours = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].map(numberToOption);
-    }
+    let hourOptions = [];
 
     const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(numberToOption);
-    
+    if(zone === "12"){
+        hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12].map(numberToOption);
+    } else if(zone === "24") {
+        hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].map(numberToOption);
+    }
+
     picker.classList.add("time-picker");
     picker.innerHTML = `
         <select class="time-picker__select">
-            ${hours.join("")}
+            ${hourOptions.join("")}
         </select>
         :
         <select class="time-picker__select">
             ${minutesOptions.join("")}
         </select>
-        <select class="time-picker__select" ${timeZones === 24 && "style='display: none'"}>
+        <select class="time-picker__select" ${zone === "24" && "style='display: none'"}>
             <option value="am">AM</option>
             <option value="pm">PM</option>
         </select>
     `;
 
-    const selects = getSelectsFromPicker(picker)
+    const selects = getSelectsFromPicker(picker, zone)
 
-    selects.hour.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker))
-    selects.minute.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker))
-    selects.amPm.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker))
+    selects.hour.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
+    selects.minute.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
+    if(zone === "12"){
+        selects.amPm.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
+    }
 
     
     if(mweTimePickable.value){
-        const { hour, minute, amPm } = getTimePartsFromMweTimePickable(mweTimePickable);
+        if(zone === "12"){
+            const { hour, minute, amPm } = getTimePartsFromMweTimePickable(mweTimePickable, zone);
+            selects.hour.value = hour;
+            selects.minute.value = minute;
+            selects.amPm.value = amPm;
+        }else if(zone === "24") {
+            const { hour, minute } = getTimePartsFromMweTimePickable(mweTimePickable, zone);
+            selects.hour.value = hour;
+            selects.minute.value = minute;  
+        }
 
-        selects.hour.value = hour;
-        selects.minute.value = minute;
-        selects.amPm.value = amPm;
     }
 
     return picker;
 }
 
-const getTimePartsFromMweTimePickable = (mweTimePickable) => {
+const getTimePartsFromMweTimePickable = (mweTimePickable, zone) => {
+    // let zone = "12"
+    if(zone === "12"){
+        const pattern12 = /^(\d+):(\d+) (am|pm)$/;
+        const [hour, minute, amPm] = Array.from(mweTimePickable.value.match(pattern12)).splice(1);
 
-    const pattern12 = /^(\d+):(\d+) (am|pm)$/;
-    const pattern24 = /^(\d+):(\d+)$/;
-    
-    const checkedTimeZone = getCheckedZone();
-    let result;
+        return {
+            hour,
+            minute,
+            amPm
+        }
+    }else if(zone === "24"){
+        const pattern24 = /(\d+):(\d+)/;
+        const [hour, minute] = Array.from(mweTimePickable.value.match(pattern24)).splice(1);
 
-    if(checkedTimeZone.value === 12){
-        result = Array.from(mweTimePickable.value.match(pattern12)).splice(1);
-    } else {
-        result = Array.from(mweTimePickable.value.match(pattern24)).splice(1);
-    }
-    console.log("result", result);
-
-    return {
-        hour: result.hour,
-        minute: result.minute,
-        amPm: result.amPm,
+        return {
+            hour,
+            minute
+        }
     }
 }
 
-const getSelectsFromPicker =(timePicker) => {
-    const [hour, minute, amPm] = timePicker.querySelectorAll(".time-picker__select");
-
-    return {
-        hour,
-        minute,
-        amPm
-    };
+const getSelectsFromPicker =(timePicker, zone) => {
+    // const zone = "12"
+    if (zone === "12") {
+        const [hour, minute, amPm] = timePicker.querySelectorAll(".time-picker__select");    
+        return {
+            hour,
+            minute,
+            amPm
+        };
+    }else if (zone === "24") {
+        const [hour, minute] = timePicker.querySelectorAll(".time-picker__select"); 
+        return {
+            hour,
+            minute
+        };
+    }
 }
 
-const getTimeStringFromPicker = (timePicker) => {
-    const selects = getSelectsFromPicker(timePicker);
-
-    return selects.amPm.value ? `${selects.hour.value}:${selects.minute.value} ${selects.amPm.value}` : `${selects.hour.value}:${selects.minute.value}`
+const getTimeStringFromPicker = (timePicker, zone) => {
+    // const zone = "12"
+    const selects = getSelectsFromPicker(timePicker, zone);
+    if(zone === "12"){
+        return `${selects.hour.value}:${selects.minute.value} ${selects.amPm.value}` 
+    }else if(zone === "24"){
+        return `${selects.hour.value}:${selects.minute.value}`
+    }
 }
 
 const numberToOption = (number) => {
@@ -159,29 +170,25 @@ const numberToOption = (number) => {
     return `<option value="${padded}">${padded}</option>`;
 }
 
-// const toggleZones = () => {
-//     const timeZones = Array.from(document.querySelectorAll(".mwe-timezone"));
-    
-//     timeZones[0].addEventListener("change", () => {
-//         timeZones[0].checked = true;
-//         timeZones[1].checked = false;
-//         console.log("toggle was made")
-//         buildPicker();
-//     });
+// document.querySelectorAll(".mwe-timezone").forEach(zone => {
+//     let activePicker = null;
+//     const mweTimePickable = document.querySelector(".mwe-timepickable")
+//     zone.addEventListener("change", ({target}) => {
+//         if(activePicker) return;
 
-//     timeZones[1].addEventListener("change", () => {
-//         timeZones[0].checked = false;
-//         timeZones[1].checked = true;
-//         console.log("toggle was made")
-//         buildPicker();
-//     });
-// }
+//         activePicker = show(mweTimePickable, target.value);
+        
+//         const onClickAway = ({ target }) => {
+//             if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
+//                 return;
+//             }
+//             document.removeEventListener("mousedown", onClickAway);
+//             document.body.removeChild(activePicker);
+//             activePicker = null
+//         };
 
-const getCheckedZone = () => {
-    const timeZones = Array.from(document.querySelectorAll(".mwe-timezone"));
-    if(timeZones[0].checked === true){
-        return timeZones[0]
-    } else {
-        return timeZones[1];
-    }
-}
+//         document.addEventListener("mousedown", onClickAway)
+        
+//     });
+// });
+activate();
