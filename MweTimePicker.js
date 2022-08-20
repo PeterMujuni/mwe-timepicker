@@ -73,14 +73,19 @@ const show = (mweTimePickable) => {
 }
 
 const buildPicker = (mweTimePickable, zone) => {
-    // const zone = "24"
     const picker = document.createElement("div");
     let hourOptions = [];
 
     const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(numberToOption);
     if(zone === "12"){
+        document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
+            pickable.value += " am"
+        })
         hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12].map(numberToOption);
     } else if(zone === "24") {
+        document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
+            pickable.value = pickable.value.slice(0, 5)
+        })
         hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].map(numberToOption);
     }
 
@@ -126,7 +131,6 @@ const buildPicker = (mweTimePickable, zone) => {
 }
 
 const getTimePartsFromMweTimePickable = (mweTimePickable, zone) => {
-    // let zone = "12"
     if(zone === "12"){
         const pattern12 = /^(\d+):(\d+) (am|pm)$/;
         const [hour, minute, amPm] = Array.from(mweTimePickable.value.match(pattern12)).splice(1);
@@ -148,7 +152,6 @@ const getTimePartsFromMweTimePickable = (mweTimePickable, zone) => {
 }
 
 const getSelectsFromPicker =(timePicker, zone) => {
-    // const zone = "12"
     if (zone === "12") {
         const [hour, minute, amPm] = timePicker.querySelectorAll(".time-picker__select");    
         return {
@@ -166,7 +169,6 @@ const getSelectsFromPicker =(timePicker, zone) => {
 }
 
 const getTimeStringFromPicker = (timePicker, zone) => {
-    // const zone = "12"
     const selects = getSelectsFromPicker(timePicker, zone);
     if(zone === "12"){
         return `${selects.hour.value}:${selects.minute.value} ${selects.amPm.value}` 
