@@ -25,13 +25,12 @@ export const activate = () => {
     `);
 
     document.querySelectorAll(".mwe-timepickable").forEach(mweTimePickable => {
-        console.log(mweTimePickable)
      let activePicker = null;
 
         mweTimePickable.addEventListener("focus", () => {
             if(activePicker) return;
 
-            activePicker = show(mweTimePickable, "24");
+            activePicker = show(mweTimePickable);
             
             const onClickAway = ({ target }) => {
                 if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
@@ -47,8 +46,20 @@ export const activate = () => {
     }); 
 }
 
-const show = (mweTimePickable, zone) => {
-    // const zone = "12";
+const checkRadioBtns = () => {
+    let timeZone;
+    document.querySelectorAll(".mwe-timezone").forEach(zone => {
+        
+        if(zone.checked){
+            timeZone = zone.value      
+        }
+          
+    });
+    return timeZone
+}
+
+const show = (mweTimePickable) => {
+    const zone = checkRadioBtns();
     
     const picker = buildPicker(mweTimePickable, zone);
 
@@ -169,26 +180,3 @@ const numberToOption = (number) => {
 
     return `<option value="${padded}">${padded}</option>`;
 }
-
-// document.querySelectorAll(".mwe-timezone").forEach(zone => {
-//     let activePicker = null;
-//     const mweTimePickable = document.querySelector(".mwe-timepickable")
-//     zone.addEventListener("change", ({target}) => {
-//         if(activePicker) return;
-
-//         activePicker = show(mweTimePickable, target.value);
-        
-//         const onClickAway = ({ target }) => {
-//             if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
-//                 return;
-//             }
-//             document.removeEventListener("mousedown", onClickAway);
-//             document.body.removeChild(activePicker);
-//             activePicker = null
-//         };
-
-//         document.addEventListener("mousedown", onClickAway)
-        
-//     });
-// });
-activate();
