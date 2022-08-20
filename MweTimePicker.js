@@ -72,20 +72,32 @@ const show = (mweTimePickable) => {
     return picker;
 }
 
+export const setupRadioButtons = () => {
+    
+    document.querySelectorAll(".mwe-timezone").forEach(radioBtn => {
+        radioBtn.addEventListener("change", ({target}) => {
+            console.log(target)
+            if(target.value === "12"){
+                document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
+                    pickable.value = "01:00 am"
+                })
+            }else if (target.value === "24"){
+                document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
+                    pickable.value = "01:00"
+                })
+            }
+        })
+    })
+}
+
 const buildPicker = (mweTimePickable, zone) => {
     const picker = document.createElement("div");
     let hourOptions = [];
 
     const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(numberToOption);
     if(zone === "12"){
-        document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
-            pickable.value += " am"
-        })
         hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12].map(numberToOption);
     } else if(zone === "24") {
-        document.querySelectorAll(".mwe-timepickable").forEach(pickable => {
-            pickable.value = pickable.value.slice(0, 5)
-        })
         hourOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].map(numberToOption);
     }
 
