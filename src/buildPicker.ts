@@ -1,7 +1,7 @@
-import { getSelectsFromPicker } from "./getSelectsFromPicker.js";
-import { getTimeStringFromPicker } from "./getTimeStringFromPicker.js";
-import { numberToOption } from "./numberToOption.js";
-import { getTimePartsFromMweTimePickable } from "./getTimePartsFromMweTimePickable.js";
+import { getSelectsFromPicker } from "./getSelectsFromPicker";
+import { getTimeStringFromPicker } from "./getTimeStringFromPicker";
+import { numberToOption } from "./numberToOption";
+import { getTimePartsFromMweTimePickable } from "./getTimePartsFromMweTimePickable";
 
 /**
  * 

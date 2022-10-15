@@ -1,5 +1,5 @@
-import { buildPicker } from "./buildPicker.js"
-import { checkRadioBtns } from "./checkRadioBtns.js"
+import { buildPicker } from "./buildPicker"
+import { checkRadioBtns } from "./checkRadioBtns"
 
 /**
  * 

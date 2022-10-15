@@ -1,4 +1,4 @@
-import { getSelectsFromPicker } from "./getSelectsFromPicker.js"
+import { getSelectsFromPicker } from "./getSelectsFromPicker"
 
 /**
  * 

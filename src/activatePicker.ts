@@ -1,4 +1,4 @@
-import { show } from "./show.js";
+import { show } from "./show";
 
 export const activate = () => {
     document.head.insertAdjacentHTML("beforeend",`
