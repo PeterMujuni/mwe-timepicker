@@ -7,8 +7,8 @@ export const checkRadioBtns = () => {
     let timeZone;
     document.querySelectorAll(".mwe-timezone").forEach(zone => {
         
-        if(zone.checked){
-            timeZone = zone.value      
+        if((zone as HTMLInputElement).checked){
+            timeZone = (zone as HTMLInputElement).value      
         }
           
     });

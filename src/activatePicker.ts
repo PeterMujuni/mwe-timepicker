@@ -27,19 +27,19 @@ export const activate = () => {
     `);
 
     document.querySelectorAll(".mwe-timepickable").forEach(mweTimePickable => {
-     let activePicker = null;
+     let activePicker: HTMLElement | null = null;
 
         mweTimePickable.addEventListener("focus", () => {
             if(activePicker) return;
 
-            activePicker = show(mweTimePickable);
+            activePicker = show(mweTimePickable as HTMLInputElement);
             
-            const onClickAway = ({ target }) => {
-                if (target === activePicker || target === mweTimePickable || activePicker.contains(target)){
+            const onClickAway = ({ target }: Event) => {
+                if (target === activePicker || target === mweTimePickable || (activePicker as HTMLElement).contains(target as Node)){
                     return;
                 }
                 document.removeEventListener("mousedown", onClickAway);
-                document.body.removeChild(activePicker);
+                document.body.removeChild(activePicker as HTMLElement);
                 activePicker = null
             };
 
