@@ -10,9 +10,9 @@ import { getTimePartsFromMweTimePickable } from "./getTimePartsFromMweTimePickab
  * @returns 
  */
 
-export const buildPicker = (mweTimePickable, zone) => {
+export const buildPicker = (mweTimePickable: HTMLInputElement, zone: string) => {
     const picker = document.createElement("div");
-    let hourOptions = [];
+    let hourOptions: string[] = [];
 
     const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(numberToOption);
     if(zone === "12"){
@@ -35,26 +35,36 @@ export const buildPicker = (mweTimePickable, zone) => {
             <option value="pm">PM</option>
         </select>
     `;
+    interface Selects {
+        hour: Element
+        minute: Element
+        amPm?: Element
+    }
+    
+    const selects: Selects | undefined = getSelectsFromPicker(picker, zone)
 
-    const selects = getSelectsFromPicker(picker, zone)
-
-    selects.hour.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
-    selects.minute.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
+    selects!.hour.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone)!)
+    selects!.minute.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone)!)
     if(zone === "12"){
-        selects.amPm.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone))
+        selects!.amPm?.addEventListener("change", () => mweTimePickable.value = getTimeStringFromPicker(picker, zone)!)
     }
 
-    
+    interface Times {
+        hour: string
+        minute: string
+        amPm?: string
+    }
+
     if(mweTimePickable.value){
         if(zone === "12"){
-            const { hour, minute, amPm } = getTimePartsFromMweTimePickable(mweTimePickable, zone);
-            selects.hour.value = hour;
-            selects.minute.value = minute;
-            selects.amPm.value = amPm;
+            const { hour, minute, amPm }: Times = getTimePartsFromMweTimePickable(mweTimePickable, zone)!;
+            (selects!.hour as HTMLInputElement).value = hour;
+            (selects!.minute as HTMLInputElement).value = minute;
+            (selects!.amPm as HTMLInputElement).value = amPm!;
         }else if(zone === "24") {
-            const { hour, minute } = getTimePartsFromMweTimePickable(mweTimePickable, zone);
-            selects.hour.value = hour;
-            selects.minute.value = minute;  
+            const { hour, minute }: Times = getTimePartsFromMweTimePickable(mweTimePickable, zone)!;
+            (selects!.hour as HTMLInputElement).value = hour;
+            (selects!.minute as HTMLInputElement).value = minute;  
         }
 
     }

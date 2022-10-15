@@ -7,8 +7,8 @@ import { checkRadioBtns } from "./checkRadioBtns.js"
  * @returns 
  */
 
-export const show = (mweTimePickable) => {
-    const zone = checkRadioBtns();
+export const show = (mweTimePickable: HTMLInputElement) => {
+    const zone: string = checkRadioBtns()!;
     
     const picker = buildPicker(mweTimePickable, zone);
 

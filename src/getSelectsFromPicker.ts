@@ -5,7 +5,7 @@
  * @returns 
  */
 
-export const getSelectsFromPicker =(timePicker, zone) => {
+export const getSelectsFromPicker =(timePicker: HTMLElement, zone: string) => {
     if (zone === "12") {
         const [hour, minute, amPm] = timePicker.querySelectorAll(".time-picker__select");    
         return {
